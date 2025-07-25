@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上海地铁随机探索</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 850px;
+            background: rgba(255, 255, 255, 0.93);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #E30613, #0090D0, #9CCD25);
+            z-index: 1;
+        }
+        
+        h1 {
+            color: #004a80;
+            margin: 25px 0 15px;
+            font-size: 2.8rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            font-size: 1.2rem;
+        }
+        
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+            margin-bottom: 40px;
+        }
+        
+        .step-card {
+            background: white;
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .step-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.18);
+        }
+        
+        .step-card h2 {
+            color: #004a80;
+            margin-bottom: 25px;
+            font-size: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .step-card h2::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 25%;
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(90deg, #E30613, #0090D0);
+            border-radius: 2px;
+        }
+        
+        .result-container {
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            perspective: 800px;
+        }
+        
+        .result-card {
+            width: 80%;
+            height: 100%;
+            background: linear-gradient(145deg, #f0f8ff, #e3f2fd);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #004a80;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        
+        .result-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #E30613, #0090D0);
+            border-radius: 3px 3px 0 0;
+        }
+        
+        .rolling {
+            animation: roll 0.8s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
+        }
+        
+        @keyframes roll {
+            0% {
+                transform: rotateX(90deg) scale(0.8);
+                opacity: 0;
+            }
+            70% {
+                transform: rotateX(-10deg) scale(1.05);
+                opacity: 0.8;
+            }
+            100% {
+                transform: rotateX(0) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #004a80, #0090D0);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0, 90, 208, 0.3);
+            letter-spacing: 1px;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 90, 208, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(2px);
+        }
+        
+        .btn::after {
+            content: "";
+            position: absolute;
+            top: -100%;
+            left: -200%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+        }
+        
+        .btn:hover::after {
+            top: 100%;
+            left: 100%;
+        }
+        
+        .history {
+            background: #f0f8ff;
+            border-radius: 18px;
+            padding: 25px;
+            margin-top: 35px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .history h3 {
+            color: #004a80;
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+        }
+        
+        .history-content {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 150px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            text-align: left;
+        }
+        
+        .history-item {
+            padding: 10px 15px;
+            border-bottom: 1px dashed #c0e0ff;
+            font-size: 1.1rem;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .line-color {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .step-card {
+                padding: 25px 20px;
+            }
+            
+            .result-card {
+                font-size: 2rem;
+                width: 90%;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>上海地铁随机探索</h1>
+        <p class="subtitle">分两步随机选择地铁线路与站点</p>
+        
+        <div class="step-container">
+            <div class="step-card">
+                <h2>第一步：选择线路</h2>
+                <p>从上海地铁1-18号线中随机选择一条线路</p>
+                <div class="result-container">
+                    <div class="result-card" id="lineResult">--</div>
+                </div>
+                <button class="btn" id="selectLine">随机选择线路</button>
+            </div>
+            
+            <div class="step-card">
+                <h2>第二步：选择站点</h2>
+                <p>在选定的线路上随机选择一个站点</p>
+                <div class="result-container">
+                    <div class="result-card" id="stationResult">--</div>
+                </div>
+                <button class="btn" id="selectStation">随机选择站点</button>
+            </div>
+        </div>
+        
+        <div class="history">
+            <h3>历史记录</h3>
+            <div class="history-content" id="historyList">
+                <div class="history-item">等待您的第一次探索...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 上海地铁线路数据库（1-18号线主要站点）
+        const metroLines = {
+            1: ["莘庄", "外环路", "莲花路", "锦江乐园", "上海南站", "漕宝路", "上海体育馆", "徐家汇", "衡山路", "常熟路", "陕西南路", "一大会址·黄陂南路", "人民广场", "新闸路", "汉中路", "上海火车站", "中山北路", "延长路", "上海马戏城", "汶水路", "彭浦新村", "共康路", "通河新村", "呼兰路", "共富新村", "宝安公路", "友谊西路", "富锦路"],
+            2: ["徐泾东", "虹桥火车站", "虹桥2号航站楼", "淞虹路", "北新泾", "威宁路", "娄山关路", "中山公园", "江苏路", "静安寺", "南京西路", "人民广场", "南京东路", "陆家嘴", "东昌路", "世纪大道", "上海科技馆", "世纪公园", "龙阳路", "张江高科", "金科路", "广兰路", "唐镇", "创新中路", "华夏东路", "川沙", "凌空路", "远东大道", "海天三路", "浦东国际机场"],
+            3: ["上海南站", "石龙路", "龙漕路", "漕溪路", "宜山路", "虹桥路", "延安西路", "中山公园", "金沙江路", "曹杨路", "镇坪路", "中潭路", "上海火车站", "宝山路", "东宝兴路", "虹口足球场", "赤峰路", "大柏树", "江湾镇", "殷高西路", "长江南路", "淞发路", "张华浜", "淞滨路", "水产路", "宝杨路", "友谊路", "铁力路", "江杨北路"],
+            4: ["宜山路", "虹桥路", "延安西路", "中山公园", "金沙江路", "曹杨路", "镇坪路", "中潭路", "上海火车站", "宝山路", "海伦路", "临平路", "大连路", "杨树浦路", "浦东大道", "世纪大道", "浦电路", "蓝村路", "塘桥", "南浦大桥", "西藏南路", "鲁班路", "大木桥路", "东安路", "上海体育场", "上海体育馆"],
+            5: ["莘庄", "春申路", "银都路", "颛桥", "北桥", "剑川路", "东川路", "江川路", "西渡", "萧塘", "奉浦大道", "环城东路", "望园路", "金海湖", "奉贤新城"],
+            6: ["港城路", "外高桥保税区北", "航津路", "外高桥保税区南", "洲海路", "五洲大道", "东靖路", "巨峰路", "五莲路", "博兴路", "金桥路", "云山路", "德平路", "北洋泾路", "民生路", "源深体育中心", "世纪大道", "浦电路", "蓝村路", "上海儿童医学中心", "临沂新村", "高科西路", "东明路", "高青路", "华夏西路", "上南路", "灵岩南路", "东方体育中心"],
+            7: ["美兰湖", "罗南新村", "潘广路", "刘行", "顾村公园", "祁华路", "上海大学", "南陈路", "上大路", "场中路", "大场镇", "行知路", "大华三路", "新村路", "岚皋路", "镇坪路", "长寿路", "昌平路", "静安寺", "常熟路", "肇嘉浜路", "东安路", "龙华中路", "后滩", "长清路", "耀华路", "云台路", "高科西路", "杨高南路", "锦绣路", "芳华路", "龙阳路", "花木路"],
+            8: ["沈杜公路", "联航路", "江月路", "浦江镇", "芦恒路", "凌兆新村", "东方体育中心", "杨思", "成山路", "耀华路", "中华艺术宫", "西藏南路", "陆家浜路", "老西门", "大世界", "人民广场", "曲阜路", "中兴路", "西藏北路", "虹口足球场", "曲阳路", "四平路", "鞍山新村", "江浦路", "黄兴路", "延吉中路", "黄兴公园", "翔殷路", "嫩江路", "市光路"],
+            9: ["松江南站", "醉白池", "松江体育中心", "松江新城", "松江大学城", "洞泾", "佘山", "泗泾", "九亭", "中春路", "七宝", "星中路", "合川路", "漕河泾开发区", "桂林路", "宜山路", "徐家汇", "肇嘉浜路", "嘉善路", "打浦桥", "马当路", "陆家浜路", "小南门", "商城路", "世纪大道", "杨高中路", "芳甸路", "蓝天路", "台儿庄路", "金桥", "金吉路", "金海路", "顾唐路", "民雷路", "曹路"],
+            10: ["基隆路", "高桥", "高桥西", "双江路", "国帆路", "新江湾城", "殷高东路", "三门路", "江湾体育场", "五角场", "国权路", "同济大学", "四平路", "邮电新村", "海伦路", "四川北路", "天潼路", "南京东路", "豫园", "老西门", "新天地", "陕西南路", "上海图书馆", "交通大学", "虹桥路", "宋园路", "伊犁路", "水城路", "龙溪路", "上海动物园", "虹桥1号航站楼", "虹桥2号航站楼", "虹桥火车站"],
+            11: ["迪士尼", "康新公路", "秀沿路", "罗山路", "御桥", "浦三路", "三林东", "三林", "东方体育中心", "龙耀路", "云锦路", "龙华", "上海游泳馆", "徐家汇", "交通大学", "江苏路", "隆德路", "曹杨路", "枫桥路", "真如", "上海西站", "李子园", "祁连山路", "武威路", "桃浦新村", "南翔", "陈翔公路", "马陆", "嘉定新城", "白银路", "嘉定西", "嘉定北"],
+            12: ["七莘路", "虹莘路", "顾戴路", "东兰路", "虹梅路", "虹漕路", "桂林公园", "漕宝路", "龙漕路", "龙华", "龙华中路", "大木桥路", "嘉善路", "陕西南路", "南京西路", "汉中路", "曲阜路", "天潼路", "国际客运中心", "提篮桥", "大连路", "江浦公园", "宁国路", "隆昌路", "爱国路", "复兴岛", "东陆路", "巨峰路", "杨高北路", "金京路", "申江路", "金海路"],
+            13: ["金运路", "金沙江西路", "丰庄", "祁连山南路", "真北路", "大渡河路", "金沙江路", "隆德路", "武宁路", "长寿路", "江宁路", "汉中路", "自然博物馆", "南京西路", "淮海中路", "一大会址·新天地", "马当路", "世博会博物馆", "世博大道", "长清路", "成山路", "东明路", "华鹏路", "下南路", "北蔡", "陈春路", "莲溪路", "华夏中路", "中科路", "学林路", "张江路"],
+            14: ["封浜", "乐秀路", "临洮路", "嘉怡路", "曹安公路", "真新新村", "真光路", "铜川路", "真如", "中宁路", "曹杨路", "武宁路", "武定路", "静安寺", "一大会址·黄陂南路", "大世界", "豫园", "陆家嘴", "浦东南路", "浦东大道", "源深路", "昌邑路", "歇浦路", "云山路", "蓝天路", "黄杨路", "云顺路", "浦东足球场", "金粤路", "桂桥路"],
+            15: ["顾村公园", "锦秋路", "丰翔路", "南大路", "祁安路", "古浪路", "武威东路", "上海西站", "铜川路", "梅岭北路", "大渡河路", "长风公园", "娄山关路", "红宝石路", "姚虹路", "吴中路", "桂林路", "桂林公园", "上海南站", "华东理工大学", "罗秀路", "朱梅路", "华泾西", "虹梅南路", "景西路", "虹梅南路高架段", "永德路", "元江路", "双柏路", "紫竹高新区"],
+            16: ["龙阳路", "华夏中路", "罗山路", "周浦东", "鹤沙航城", "航头东", "新场", "野生动物园", "惠南", "惠南东", "书院", "临港大道", "滴水湖"],
+            17: ["虹桥火车站", "诸光路", "蟠龙路", "徐盈路", "徐泾北城", "嘉松中路", "赵巷", "汇金路", "青浦新城", "漕盈路", "淀山湖大道", "朱家角", "东方绿舟"],
+            18: ["长江南路", "殷高路", "上海财经大学", "复旦大学", "国权路", "抚顺路", "江浦路", "江浦公园", "平凉路", "丹阳路", "昌邑路", "民生路", "杨高中路", "迎春路", "龙阳路", "芳芯路", "北中路", "莲溪路", "御桥", "康桥", "周浦", "繁荣路", "沈梅路", "鹤涛路", "下沙", "航头"]
+        };
+
+        // 线路颜色（上海地铁官方配色）
+        const lineColors = {
+            1: '#E30613', 2: '#0090D0', 3: '#FABE00', 4: '#5F259F',
+            5: '#AC4FC6', 6: '#D60270', 7: '#F58220', 8: '#009D54',
+            9: '#71C5E8', 10: '#C1A7E2', 11: '#76232F', 12: '#007B5F',
+            13: '#D85B1C', 14: '#827A00', 15: '#BBA786', 16: '#2CD5E1',
+            17: '#B47AC8', 18: '#9CCD25'
+        };
+
+        // 获取DOM元素
+        const lineResult = document.getElementById('lineResult');
+        const stationResult = document.getElementById('stationResult');
+        const selectLineBtn = document.getElementById('selectLine');
+        const selectStationBtn = document.getElementById('selectStation');
+        const historyList = document.getElementById('historyList');
+        
+        let currentLine = 0;
+        let history = [];
+        
+        // 生成随机线路（1-18）
+        function generateRandomLine() {
+            // 添加动画效果
+            lineResult.classList.remove('rolling');
+            void lineResult.offsetWidth; // 触发重排
+            lineResult.classList.add('rolling');
+            
+            setTimeout(() => {
+                const lineNum = Math.floor(Math.random() * 18) + 1;
+                currentLine = lineNum;
+                
+                // 更新显示
+                lineResult.innerHTML = `<span class="line-color" style="background-color:${lineColors[lineNum]}"></span>${lineNum}号线`;
+                lineResult.style.color = lineColors[lineNum];
+                
+                // 重置站点结果
+                stationResult.textContent = "--";
+                stationResult.style.color = "#004a80";
+                
+                // 添加到历史记录
+                addToHistory(`选择了线路: ${lineNum}号线`);
+            }, 400);
+        }
+        
+        // 在当前线路上生成随机站点
+        function generateRandomStation() {
+            if (!currentLine) {
+                alert("请先选择一条线路！");
+                return;
+            }
+            
+            // 添加动画效果
+            stationResult.classList.remove('rolling');
+            void stationResult.offsetWidth; // 触发重排
+            stationResult.classList.add('rolling');
+            
+            setTimeout(() => {
+                const stations = metroLines[currentLine];
+                const randomIndex = Math.floor(Math.random() * stations.length);
+                const station = stations[randomIndex];
+                
+                // 更新显示
+                stationResult.textContent = station;
+                stationResult.style.color = lineColors[currentLine];
+                
+                // 添加到历史记录
+                addToHistory(`在${currentLine}号线选择了: ${station}站`);
+            }, 400);
+        }
+        
+        // 添加到历史记录
+        function addToHistory(text) {
+            const now = new Date();
+            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+            
+            // 创建历史记录项
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.innerHTML = `<strong>[${timeStr}]</strong> ${text}`;
+            
+            // 添加到顶部
+            if (historyList.firstChild && historyList.firstChild.textContent.includes('等待')) {
+                historyList.removeChild(historyList.firstChild);
+            }
+            
+            historyList.insertBefore(item, historyList.firstChild);
+            
+            // 限制历史记录数量
+            if (historyList.children.length > 8) {
+                historyList.removeChild(historyList.lastChild);
+            }
+        }
+        
+        // 添加事件监听器
+        selectLineBtn.addEventListener('click', generateRandomLine);
+        selectStationBtn.addEventListener('click', generateRandomStation);
+        
+        // 初始选择一条线路
+        setTimeout(() => {
+            generateRandomLine();
+        }, 800);
+    </script>
+</body>
+</html>
